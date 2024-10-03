@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	slug: string,
+	data: CollectionEntry<'posts'>['data']
+}
+
+
+const { slug, data } = Astro.props
+
+---
+<li>
+	<h3>
+		<a href={`/posts/${slug}`}>
+			{data.title}
+		</a>
+	</h3>
+	{/* TODO: adicionar uma descrição */}
+	<p>Autor:{ data.author }, Criado em: { data.createdAt}, Atualizado em: {data.updatedAt}</p>
+	{data.tags && 
+		<p>Tags: 
+			{data.tags.map(tag => <a href={`/tags/${tag}`}>{tag}</a>)}
+		</p>
+	}
+</li>
+
+<style>
+	
+</style>

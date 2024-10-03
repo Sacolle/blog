@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import { sortPosts } from "../utils/sortfuncions.ts"
+
+interface Props {
+}
+
+const { } = Astro.props;
+
+const LIST_SIZE = 6
+const TAG_SIZE = 4
+
+const posts = await getCollection('posts')
+sortPosts(posts)
+
+//conta o número de ocorrencias de uma tag
+const tags = Object.entries(posts.flatMap(({ data }) => data.tags)
+	.reduce((acc, curr) => { 
+		return acc[curr] ? ++acc[curr] : acc[curr] = 1 , acc
+	}, {} as Record<string, number>))
+
+//ordena do maior para o menor
+tags.sort(([, v1], [, v2]) => v1 - v2)
+//pega as primeiras TAG_SIZE tags
+const tags_no_dup = tags.map(([k,]) => k).slice(0, TAG_SIZE)
+
+let topicPosts = [
+	{
+		topic: "Posts Recentes",
+		link: "/posts",
+		posts: posts.map(( { slug, data }) => ({link: slug, nome: data.title})).slice(0, LIST_SIZE)
+	},
+	...tags_no_dup.map(tag => ({
+		topic: tag,
+		link: `/tags/${tag}`,
+		posts: posts
+			.filter(( { data }) => data.tags.includes(tag))
+			.map(( { slug, data }) => ({link: slug, nome: data.title}))
+			.slice(0, LIST_SIZE)
+	}))
+]
+
+---
+<nav>
+	<ul class="sidebar">
+		{ topicPosts.map(({ topic, link, posts }) => 
+			<li>
+				<a href={link}>{topic}</a>
+				<ul>
+					{ posts.map(({ link, nome}) => 
+						<li><a href={`/posts/${link}`}>{nome}</a></li>
+					)}
+				</ul>
+			</li>
+		)}
+	</ul>
+</nav>
+<style>
+	ul {
+		list-style: none;
+	}
+	a {
+		color: var(--black);
+		text-decoration: none;
+		text-wrap: wrap;
+	}
+	nav {
+		margin-top: 4vh;
+		margin-left: 2vw;
+	}
+	.sidebar{
+		margin: 0;
+		padding: 1vw;
+		overflow: auto;
+		position: fixed;
+		max-width: 15%;
+		overflow: hidden;
+		border-left: solid var(--main-color);
+	}
+	
+	/* check responsivity later */
+	@media (max-width: 800px) {
+		.sidebar{
+			display: none;
+		}
+	}
+
+</style>

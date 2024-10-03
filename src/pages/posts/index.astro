@@ -1,0 +1,19 @@
+---
+import { getCollection } from "astro:content";
+import RootLayout from "../../layouts/RootLayout.astro";
+import ListLayout from "../../layouts/ListLayout.astro";
+import { sortPosts } from "../../utils/sortfuncions.ts"
+import Item from "../../components/Item.astro";
+
+const posts = await getCollection('posts')
+sortPosts(posts)
+---
+
+<RootLayout title="Posts">
+	<ListLayout title="Postagens">
+		{ posts.map(({ slug, data}) => <Item slug={slug} data={data}/>)}
+	</ListLayout>
+</RootLayout>
+
+<style>
+</style>

@@ -1,0 +1,76 @@
+---
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro';
+import ContentSideBar from '../components/ContentSideBar.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-br">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<Header/>
+		<div class="site-split">
+			<ContentSideBar/>
+			<slot />
+		</div>
+		<Footer/>
+	</body>
+</html>
+<style is:global>
+	:root {
+		--main-color: #d33847;
+		--secondary-color: #f79824ff;
+		--complementary-color: #388697ff;
+		--background-color: #fefbfb; /* equivalente a cor acima, mas em hsl com 97~98% de luminosidade*/
+		--gray: #c1c1c1ff;
+		--black: #1e1b1b;
+		--other-black: #333333;
+	}
+	html {
+		font-family: system-ui, sans-serif;
+		background: var(--background-color);
+	}
+	body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+	code {
+		font-family:
+			Menlo,
+			Monaco,
+			Lucida Console,
+			Liberation Mono,
+			DejaVu Sans Mono,
+			Bitstream Vera Sans Mono,
+			Courier New,
+			monospace;
+	}
+	a:hover {
+		border-bottom: solid var(--main-color);
+		font-weight: bold;
+	}
+	a {
+		color: var(--complementary-color);
+		font-weight: 500;
+		text-decoration: none;
+	}
+	.site-split {
+		display: grid;
+		width: 100%;
+		grid-template-columns: 20% 60% 20%;
+	}
+</style>

@@ -1,0 +1,80 @@
+---
+import type { MarkdownHeading } from 'astro';
+import RecursiveList from './RecursiveList.astro';
+
+interface Props {
+	headings: MarkdownHeading[]
+}
+
+type HeadTree  = {
+	text: string,
+	slug: string,
+	sub: HeadTree[]
+}
+
+const { headings } = Astro.props;
+
+function parseHead(depth: number, text: string, slug: string, tree: HeadTree[]){
+	if(depth == 1){
+		tree.push({ text, slug, sub: new Array()})
+	}else if(tree.at(-1) === undefined){
+		tree.push({ text, slug, sub: new Array()})
+	}else{
+		const nextDepth = tree.at(-1) as HeadTree //eu sei que aqui tree(-1) é definido
+		parseHead(depth - 1, text, slug, nextDepth.sub)
+	}
+}
+
+const sections: HeadTree[] = []
+
+for(const { depth, text, slug } of headings){
+	parseHead(depth, text, slug, sections)
+}
+
+---
+<nav>
+	<ul class="sidebar">
+		<h3>Índices</h3>
+		{ sections.map(({ text, slug, sub }) => 
+			<li>
+				<a href={`#${slug}`}>{text}</a>
+				{ sub.length > 0 && <RecursiveList head={sub}/> }
+			</li>
+		)}
+	</ul>
+</nav>
+<style>
+	ul {
+		list-style: none;
+	}
+	a {
+		color: var(--black);
+		text-decoration: none;
+	}
+	nav {
+		margin-top: 8vh;
+	}
+	.sidebar{
+		padding: 0;
+		padding-bottom: 3vh;
+		padding-right: 1vw;
+		margin: 0;
+		overflow: auto;
+		position: fixed;
+		border-top: solid var(--main-color);
+		border-bottom: solid var(--main-color);
+
+		overflow-y: scroll;
+		overflow-x: hidden;
+		height: 80vh;
+		scrollbar-width: thin;
+		scrollbar-color: var(--main-color) var(--background-color);
+	}
+	/* check responsivity later */
+	@media (max-width: 800px) {
+		.sidebar{
+			display: none;
+		}
+	}
+
+</style>

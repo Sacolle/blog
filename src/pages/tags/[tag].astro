@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import RootLayout from '../../layouts/RootLayout.astro';
+import ListLayout from "../../layouts/ListLayout.astro";
+import Item from '../../components/Item.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('posts')
+	const tags = posts.flatMap(({ data }) => data.tags)
+	const tags_no_dup = [...(new Set(tags))]
+	return tags_no_dup.map(tag => ({
+		params: { tag }
+	}));
+}
+
+const { tag } = Astro.params;
+
+
+const posts_with_tag = await getCollection('posts', ({ data }) => (data.tags).includes(tag))
+
+---
+<RootLayout title=`Topico: ${tag}`>
+	<ListLayout title=`Topico: ${tag}`>
+		{ posts_with_tag.map(({ slug, data}) => <Item slug={slug} data={data}/>)}
+	</ListLayout>
+</RootLayout>
+
+<style>
+</style>

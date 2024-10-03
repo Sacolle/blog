@@ -1,0 +1,49 @@
+---
+interface Props {
+}
+
+const { } = Astro.props;
+---
+<header>
+	<nav>
+		<a class="website-title" href="/">Colle's Blog</a>
+		<a class="subpage" href="/">Home</a>
+		<a class="subpage" href="/posts">Posts</a>
+		<a class="subpage" href="/about">Sobre</a>
+		<span>
+			<a href="https://github.com/Sacolle"><img src="/github.svg" alt="github"></a>
+			<!-- Sim, isso eh um rick roll, sabe, pro site ser retro -->
+			<a href="https://youtu.be/dQw4w9WgXcQ?si=HEWy7g-OLiIFvJaG"><img src="/youtube.svg" alt="youtube"></a>
+		</span>
+	</nav>
+</header>
+<style>
+	header {
+		position: fixed;
+		z-index: 1;
+		width: 100%;
+	}
+	nav {
+		display: flex;
+		flex-direction: row;
+	}
+	.website-title {
+		padding-right: 1vw;
+		padding-left: 1vw;
+		margin-right: 3vw;
+	}
+	.subpage {
+		padding-left: 1vw;
+		padding-right: 1vw;
+	}
+	nav > span {
+		display: flex;
+		gap: 1vw;
+		margin-left: auto;
+		margin-right: 3vw;
+	}
+	a {
+		color: var(--black);
+		text-decoration: none;
+	}
+</style>

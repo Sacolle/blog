@@ -1,0 +1,33 @@
+---
+type HeadTree  = {
+	text: string,
+	slug: string,
+	sub: HeadTree[]
+}
+
+interface Props {
+	head: HeadTree[]
+}
+
+
+const { head } = Astro.props;
+
+---
+<ul>
+	{ head.map(({ text, slug, sub}) => 
+		<li>
+			<a href={`#${slug}`}>{text}</a>
+			{ sub.length > 0  && <Astro.self head={sub}/>}
+		</li>
+	)}
+</ul>
+
+<style>
+	ul {
+		list-style: square;
+	}
+	a {
+		color: inherit;
+		text-decoration: inherit;
+	}
+</style>
