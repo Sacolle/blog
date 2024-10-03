@@ -10,6 +10,6 @@ updatedAt: 02/10/2024
 
 Isso é um teste
 modificando o arquivo
-[Another Post](/posts/another-post)
+[Another Post](/blog/posts/another-post)
 
-![sad-chopper.jpeg](/sad-chopper.jpeg)
+![sad-chopper.jpeg](/blog/sad-chopper.jpeg)

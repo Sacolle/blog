@@ -9,10 +9,11 @@ interface Props {
 
 const { slug, data } = Astro.props
 
+const base = import.meta.env.BASE_URL
 ---
 <li>
 	<h3>
-		<a href={`/posts/${slug}`}>
+		<a href={`${base}/posts/${slug}`}>
 			{data.title}
 		</a>
 	</h3>
@@ -20,7 +21,7 @@ const { slug, data } = Astro.props
 	<p>Autor:{ data.author }, Criado em: { data.createdAt}, Atualizado em: {data.updatedAt}</p>
 	{data.tags && 
 		<p>Tags: 
-			{data.tags.map(tag => <a href={`/tags/${tag}`}>{tag}</a>)}
+			{data.tags.map(tag => <a href={`${base}/tags/${tag}`}>{tag}</a>)}
 		</p>
 	}
 </li>

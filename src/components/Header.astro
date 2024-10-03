@@ -3,17 +3,19 @@ interface Props {
 }
 
 const { } = Astro.props;
+
+const base = import.meta.env.BASE_URL
 ---
 <header>
 	<nav>
-		<a class="website-title" href="/">Colle's Blog</a>
-		<a class="subpage" href="/">Home</a>
-		<a class="subpage" href="/posts">Posts</a>
-		<a class="subpage" href="/about">Sobre</a>
+		<a class="website-title" href=`${base}/`>Colle's Blog</a>
+		<a class="subpage" href=`${base}/`>Home</a>
+		<a class="subpage" href=`${base}/posts`>Posts</a>
+		<a class="subpage" href=`${base}/about`>Sobre</a>
 		<span>
-			<a href="https://github.com/Sacolle"><img src="/github.svg" alt="github"></a>
+			<a href="https://github.com/Sacolle"><img src=`${base}/github.svg` alt="github"></a>
 			<!-- Sim, isso eh um rick roll, sabe, pro site ser retro -->
-			<a href="https://youtu.be/dQw4w9WgXcQ?si=HEWy7g-OLiIFvJaG"><img src="/youtube.svg" alt="youtube"></a>
+			<a href="https://youtu.be/dQw4w9WgXcQ?si=HEWy7g-OLiIFvJaG"><img src=`${base}/youtube.svg` alt="youtube"></a>
 		</span>
 	</nav>
 </header>
