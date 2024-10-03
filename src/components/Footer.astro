@@ -10,9 +10,20 @@ const updatedDate = now.toLocaleDateString("en-GB")
 <footer>
 	Atualizado pela vez em: {updatedDate} <br>
 	Ícones da biblioteca <a href="https://feathericons.com/">feather</a> <br>
-	Tenha um ótimo dia
+	<span id="tenha">Tenha um ótimo dia.</span>
 </footer>
-
+<script>
+	//personalidade
+	const tenha = document.getElementById('tenha') as HTMLElement
+	const timeOffDay = (new Date()).getHours();
+	if(timeOffDay > 5 && timeOffDay < 4){
+		tenha.textContent = "Tenha um ótimo dia."
+	}else if(timeOffDay >= 4 && timeOffDay < 7){
+		tenha.textContent = "Tenha uma ótima tarde."
+	}else{
+		tenha.innerText = "Tenha uma ótima noite."
+	}
+</script>
 <style>
 
 </style>
