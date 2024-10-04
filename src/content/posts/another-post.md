@@ -1,69 +1,11 @@
 ---
 tags:
-	- misc
-author: fulano
+  - misc
+author: Pedro Colle
 title: Another Post
-createdAt: 02/10/2024
-updatedAt: 01/10/2024
+createdAt: 01/10/2024
+updatedAt: 03/10/2024
 ---
 # Another Post
-
-
-## other title
-
-### subtitle
-
-
-## other title
-
-# big man
-
-### skip
-
-## return
-
-# back to the top
-
-### maybe 
-
-
-#### stuffgkjsdkçlgjsaçkgjçklgadsk~fghjadkl~jdfkçhjkdfçljndflahkhjadkfjhkdfajh
-
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-##### depth
-
-## max
 
 stuff

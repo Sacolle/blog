@@ -1,7 +1,7 @@
 ---
 tags:
   - cooking
-author: fulano
+author: Pedro Colle
 title: A post
 createdAt: 01/10/2024
 updatedAt: 02/10/2024
