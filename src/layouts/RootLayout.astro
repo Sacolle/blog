@@ -34,10 +34,12 @@ const base = import.meta.env.BASE_URL
 <style is:global>
 	:root {
 		--main-color: #d33847;
-		--secondary-color: #f79824ff;
-		--complementary-color: #388697ff;
+		--secondary-color: #f79824;
+		--hover-color: rgba(247, 152, 36, 0.5);
+		--complementary-color: #388697;
 		--background-color: #fefbfb; /* equivalente a cor acima, mas em hsl com 97~98% de luminosidade*/
-		--gray: #c1c1c1ff;
+		--font-color: #1e1b1b;
+		--gray: #c1c1c1;
 		--black: #1e1b1b;
 		--other-black: #333333;
 	}
@@ -46,6 +48,8 @@ const base = import.meta.env.BASE_URL
 		background: var(--background-color);
 	}
 	body {
+		margin:0;
+		padding: 0;
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
@@ -61,15 +65,30 @@ const base = import.meta.env.BASE_URL
 			Courier New,
 			monospace;
 	}
-	a:hover {
-		border-bottom: solid var(--main-color);
-		font-weight: bold;
-	}
+
 	a {
+		position: relative; 
 		color: var(--complementary-color);
-		font-weight: 500;
-		text-decoration: none;
+		text-decoration: none; 
 	}
+
+	a::after {
+		content: '';
+		position: absolute;
+		left: -105%;
+		bottom: 0;
+		width: 105%; /* Adjust size as needed */
+		height: 2px; /* tamanho da barra */
+		background-color: var(--secondary-color);
+		transform: translateX(50%) scaleX(0); 
+		transition: transform 0.3s ease;
+		z-index: -1; /* Make sure it stays behind the text */
+	}
+
+	a:hover::after {
+		transform: translateX(100%) scaleX(1); 
+	}
+
 	.site-split {
 		display: grid;
 		width: 100%;
