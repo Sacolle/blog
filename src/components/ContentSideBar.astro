@@ -16,7 +16,7 @@ const posts = await getCollection('posts')
 sortPosts(posts)
 
 //conta o número de ocorrencias de uma tag
-const tags = Object.entries(posts.flatMap(({ data }) => data.tags)
+const tags = Object.entries<number>(posts.flatMap(({ data }) => data.tags)
 	.reduce((acc, curr) => { 
 		return acc[curr] ? ++acc[curr] : acc[curr] = 1 , acc
 	}, {} as Record<string, number>))
