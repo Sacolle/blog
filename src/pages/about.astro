@@ -1,16 +1,16 @@
 ---
-import RawLayout from "../layouts/RawLayout.astro";
+import HomeLayout from "../layouts/HomeLayout.astro";
 import RootLayout from "../layouts/RootLayout.astro";
 ---
 
 <RootLayout title="Sobre">
-	<RawLayout>
+	<HomeLayout>
 		<h1>Sobre Mim</h1>
 		<p>Meu nome é Pedro Colle, as vezes faço algumas coisas.</p>
 		<div class="img-holder">
 			<img src=`${import.meta.env.BASE_URL}/sad-chopper.jpeg` alt="Chopper triste">
 		</div>
-	</RawLayout>
+	</HomeLayout>
 </RootLayout>
 <style>
 	h1 {

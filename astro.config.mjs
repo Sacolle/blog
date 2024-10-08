@@ -8,10 +8,9 @@ export default defineConfig({
 	site: 'https://sacolle.github.io',
 	base: "blog",
 	output: "static",
-	/*
 	markdown: {
 		syntaxHighlight: "prism",
 		remarkPlugins: [remarkMath],
 		rehypePlugins: [rehypeKatex]
-	}*/
+	}
 });
