@@ -18,7 +18,7 @@ const base = import.meta.env.BASE_URL
 		</a>
 	</h3>
 	{/* TODO: adicionar uma descrição */}
-	<p>Autor:{ data.author }, Criado em: { data.createdAt}, Atualizado em: {data.updatedAt}</p>
+	<p>Autor: { data.author }, Criado em: { data.createdAt}, Atualizado em: {data.updatedAt}</p>
 	{data.tags && 
 		<p>Tags: 
 			{data.tags.map(tag => <a href={`${base}/tags/${tag}`}>{tag}</a>)}

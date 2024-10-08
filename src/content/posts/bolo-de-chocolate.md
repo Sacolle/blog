@@ -12,6 +12,8 @@ Receita de um bolo de chocolate que fica uma delicia
 
 Copo = 236ml
 
+$X = x_1$
+
 ## Bolo:
 
 - 3 ovos
