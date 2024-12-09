@@ -11,6 +11,18 @@ export default defineConfig({
 	markdown: {
 		syntaxHighlight: "prism",
 		remarkPlugins: [remarkMath],
-		rehypePlugins: [rehypeKatex]
+		rehypePlugins: [
+			[
+				rehypeKatex,
+				{
+					displayMode:true,
+					leqno: true,
+					fleqn: false,
+					macros: {
+						"\\St" : "\\langle #1 \\rangle"
+					}
+				}
+			]
+		]
 	}
 });

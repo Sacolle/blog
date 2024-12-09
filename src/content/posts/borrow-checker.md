@@ -1,28 +1,28 @@
 ---
+title: Entendendo o Borrow Checker em Rust
+author: Pedro Colle
+createdAt: 08/10/2024
+updatedAt: 28/11/2024
 tags:
   - Rust
   - TCC
-author: Pedro Colle
-title: Borrow Checker
-createdAt: 08/10/2024
-updatedAt: 11/10/2024
 ---
-# Entendendo o Borrow Checker de Rust
+# Entendendo o Borrow Checker em Rust
 
-Rust é uma linguagem de programação de baixo nível, comparável a C++, que oferece acesso a memória seguro sem custo ao tempo de execução do programa. Ao invés de utilizar um *garbage collector* para abstrair o acesso a memória do programador, Rust se utiliza de uma série de regras para checar e gerir, em tempo de compilação, os acessos a memória, evitando erros como *use after free*, *double free*, *race conditions*, etc.  O mecanismo dentro da linguagem que faz essa validação é o Borrow Checker. 
+Rust é uma linguagem de programação de baixo nível, comparável a C++, que oferece acesso a memória seguro sem custo ao tempo de execução do programa. Ao invés de utilizar um *gabage collector* para abstrair o acesso a memória do programador, Rust se utiliza de uma série de regras para checar e gerir, em tempo de compilação, os acessos a memória, evitando erros como *use after free*, *double free*, *race conditions*, etc.  O mecanismo dentro da linguagem que faz essa validação é o Borrow Checker. 
 
 Esse resumo é uma síntese do capítulo 2 - *A Tour of Rust* do artigo [*RustBelt: securing the foundations of the Rust programming language*](https://dl.acm.org/doi/pdf/10.1145/3158154), assim como elementos extraídos do [Rust Book](https://doc.rust-lang.org/1.8.0/book/README.html) e outras fontes, que serão citadas a medida que aparecem.
 ## Stack vs Heap
 
 Antes de falar do Borrow Checker, é importante mencionar a relação que o sistema de *Ownnership* em rust tem com o *stack* (pilha) e a *heap*. Para os não iniciado:
 - O *stack* é uma região de memória com uma estrutura de [pilha](https://pt.wikipedia.org/wiki/Pilha_(inform%C3%A1tica)), em que se aloca as variáveis locais com tamanho **conhecido** em tempo de compilação.
-- A *heap* é uma outra região de memória, sem uma estrutura particular, em que se aloca os valores com tamanho **desconhecido** em tempo de compilação. Mais especificamente, qualquer valor com tamanho dinâmico, como listas, strings e buffers, serão alocados, em parte, na heap.
+- A *heap* é uma outra região de memória, sem uma estrutura partcular, em que se aloca os valores com tamanho **desconhecido** em tempo de compilação. Mais especificamente, qualquer valor com tamanho dinâmico, como listas, strings e buffers, serão alocados, em parte, na heap.
 Essa clarificação, "*em parte*", é relevante na discussão do *Borrow Checker*, pois essas estruturas de dados tem um segmento, o de tamanho conhecido, alocado no stack. A alocação de uma string dinâmica em Rust pode ser feita da seguinte forma:
 ```rust
 let s1 = String::new("hello");
 ```
 Essa string `"hello"`, por exemplo, aloca a capacidade, tamanho e o ponteiro para a *heap* no *stack*, e a sequencia de caracteres 'h', 'e', 'l', 'l', 'o' na *heap*:
-![string-layout.svg](/blog/string-layout.svg)
+![string-layout.svg](./string-layout.svg)
 Imagem do layout da string "hello", extraída do [The Rust Programming Language](https://doc.rust-lang.org/book/title-page.html) 
 
 Esses conceitos carregam para o comportamento de cópia em Rust. Na linguagem, a cópia de estruturas de dados é sempre rasa. Ou seja, quando há uma atribuição de valores para variáveis, o que será copiado para a variável é o valor alocado na pilha. Há certos tipos de dados em rust que uma cópia rasa é suficiente para copiar todo o conteúdo como os tipos numéricos (nesse caso implementam o [Trait](https://doc.rust-lang.org/book/ch10-02-traits.html) `Copy`). 
@@ -230,7 +230,5 @@ O *Borrow Checker* em Rust é uma poderosa ferramenta para assegurar a escrita d
 Neste artigo, faltou-se discutir alguns elementos de rust, como [paralelismo](https://doc.rust-lang.org/book/ch16-00-concurrency.html), [closures](https://doc.rust-lang.org/1.8.0/book/closures.html), [genéricos](https://doc.rust-lang.org/1.8.0/book/generics.html) , e as suas interações com o *Borrow Checker*. Alguns elementos mais específicos também ficaram faltando, como [*reborrows*](https://haibane-tenshi.github.io/rust-reborrowing/), *interior pointers*, *double references*, etc, que eu busco discorrer em uma postagem futura.
 
 Muito obrigado por lerem e tal.
-
-![chopper-rust.jpg](/blog/chopper-rust.jpg)
-
+![chopper-rust.jpg](./chopper-rust.jpg)
 Me again, btw.
