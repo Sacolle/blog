@@ -21,11 +21,14 @@ const base = import.meta.env.BASE_URL
 	<p>Autor: { data.author }, Criado em: { data.createdAt}, Atualizado em: {data.updatedAt}</p>
 	{data.tags && 
 		<p>Tags: 
-			{data.tags.map(tag => <a href={`${base}/tags/${tag}`}>{tag}</a>)}
+			{data.tags.map(tag => <a class="tag" href={`${base}/tags/${tag}`}>{tag}</a>)}
 		</p>
 	}
 </li>
 
 <style>
+	.tag{
+		padding-right: 12px;
+	}
 	
 </style>
