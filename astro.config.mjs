@@ -19,7 +19,9 @@ export default defineConfig({
 					leqno: true,
 					fleqn: false,
 					macros: {
-						"\\St" : "\\langle #1 \\rangle"
+						"\\St" : "\\langle #1 \\rangle",
+						"\\OR" : "\\;|\\;",
+						"\\NLOR" : "|\\;"
 					}
 				}
 			]
