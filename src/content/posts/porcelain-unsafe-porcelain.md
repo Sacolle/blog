@@ -28,7 +28,7 @@ Expression \ni e ::&= x \OR v \\
 &\NLOR \text{*}e \OR \&x \\
 &\NLOR e;e \; \OR \{\,e\,\} \; \\ 
 &\NLOR \mathbf{malloc}(e) \OR \mathbf{free}(e, e) \; \\ 
-&\NLOR \mathbf{let}\; x[n] \OR e :\!n\!= e \; \\
+&\NLOR \mathbf{let}\; x[n] \OR e := e \; \\
 &\NLOR \mathbf{if}(e) \; e \; \mathbf{else} \; e \; \OR \mathbf{while}(e) \; e \\
 &\NLOR f(\bar e) \\ 
 Function \ni F ::&= \mathbf{let} \; f(\overline{x})\; e \; F \; | \; \mathbf{let}\;() \; e
