@@ -11,7 +11,7 @@ tags:
 
 Este é um artigo enxuto com as modificações da linguagem, removendo mecanismos que se provaram insatisfatórios e introduzindo novas ferramentas. O principal são a detecção das violações de memória e emissão dos erros apropriados.
 
-A implementação dessa etapa segue no meu [github](https://github.com/Sacolle/Interpretador-PCL). Sendo esse artigo baseado nesse [commit específico](https://github.com/Sacolle/Interpretador-PCL/commit/2699dcb512dff0e6a621995a186cd614f5e5acb6).
+A implementação dessa etapa segue no meu [github](https://github.com/Sacolle/Interpretador-PCL). Sendo esse artigo baseado nesse [commit específico](https://github.com/Sacolle/Interpretador-PCL/commit/2bf02390eae62fe988ea9afd8cc0131d8e27cf8a).
 
 ## Sintaxe modificada
 Segue-se a modificação da sintaxe:
@@ -31,6 +31,8 @@ Expression \ni e ::&= x \OR v \\
 &\NLOR \mathbf{panic}\;pcode \\ 
 PanicCodes \ni pcodes ::&= \mathbf{OutOfBoundsRead}\\
 &\NLOR \mathbf{OutOfBoundsWrite}\\
+&\NLOR \mathbf{NullPtrDereference}\\
+&\NLOR \mathbf{UserError}\\
 &\NLOR \mathbf{UseAfterFree}\\
 &\NLOR \mathbf{UninitializedAcess}\\
 &\NLOR \mathbf{FreeMemoryNotOnHeap}\\
@@ -40,7 +42,7 @@ Function \ni F ::&= \mathbf{let} \; f(\overline{x})\; e \; F \; | \; \mathbf{let
 Globals \ni G ::&= \mathbf{global}\; x[n] \;G \;|\; F
 \end{align*}
 $$
-Removido o operador $\mathbf{as}$, pois no contexto de PCL unsafe, o programador pode gerar um código com locais diretamente escritos. No caso, não há mecanismo no compilador que faça essa operação possível. Porém, o único caso de uso frequente é o de checar se um ponteiro é o ponteiro nulo. Assim, na hora de programar existe o macro `NULL`, que expande para a localização na memória, $l^m$, de índice 0.
+Removido o operador $\mathbf{as}$, pois com a adição de meta dados nos ponteiros, estes não poderiam ser construídos a partir de um número.  Na hora de escrever o código, não pode-se escrever as localizações diretamente, nem o comando $\mathbf{panic}$. Para lidar com isso, adicionou-se o macro `NULL`, que expande para a localização na memória $l^m\{0, 0, 0, 0\}$, representando o ponteiro nulo, e o macro `PANIC` que expande para $\mathbf{panic}\;\mathbf{UserError}$. 
 
 ### Declarações Globais
 Um elemento que estava em falta em PCL unsafe foram as declarações globais. Tecnicamente elas não são necessárias, mas o seu custo de implementação é relativamente baixo e com elas há um aumento considerável na expressividade da linguagem. A motivação principal foi a implementação de um `malloc` e um `free` na linguagem, usando uma estrutura global para lidar com segmentos de memória. Essa estrutura talvez seja implementada na transformação das linguagens.
@@ -244,14 +246,17 @@ $$
 $$
 $$
 \begin{align*}
+& \text{Atribui-deref-mem}_{null\text{-}ptr\text{-}dereference} \\[1pt]
+&\frac{i = 0}
+{F\vdash\St{\text{*}l^m\{i, k, o, s\} := v, a, p, m} \to \St{\mathbf{panic}\;\mathbf{NullPtrDeref}, a, p, m}} \\
 & \text{Atribui-deref-mem}_{out\text{-}of\text{-}bounds} \\[1pt]
-&\frac{0 > o \ge s}
+&\frac{i \neq 0 \quad 0 > o \ge s}
 {F\vdash\St{\text{*}l^m\{i, k, o, s\} := v, a, p, m} \to \St{\mathbf{panic}\;\mathbf{OutOfBoundsWrite}, a, p, m}} \\
 & \text{Atribui-deref-mem}_{use\text{-}after\text{-}free} \\[1pt]
-&\frac{0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k \neq k_m }
+&\frac{i \neq 0 \quad 0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k \neq k_m }
 {F\vdash\St{\text{*}l^m\{i, k, o, s\} := v, a, p, m} \to \St{\mathbf{panic}\;\mathbf{UseAfterFree}, a, p, m}} \\
 & \text{Atribui-deref-mem} \\[1pt]
-&\frac{0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k = k_m }
+&\frac{i \neq 0 \quad 0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k = k_m }
 {F\vdash\St{\text{*}l^m\{i, k, o, s\} := v, a, p, m} \to \St{v, a, p, m[i + o \mapsto v]}} \\
 \end{align*}
 $$
@@ -265,21 +270,21 @@ $$
 &\text{Free}_{left-step} \\
 &\frac{F\vdash\St{e_1, a, p, m} \to\St{e_1', a', p', m'}}{F\vdash\St{\mathbf{free}(e_1, e_2),a, p, m} \to\St{\mathbf{free}(e_1', e_2),a', p', m'}} \\
 &\text{Free}_{right-step} \\
-&\frac{F\vdash\St{e, a, p, m} \to\St{e', a', p', m'}}{F\vdash\St{\mathbf{free}(l, e),a, p, m} \to\St{\mathbf{free}(l, e'),a', p', m'}} \\
-&\text{Free}\\ 
-& \frac{}{F\vdash\St{\mathbf{free}(l^m, n),a, p, m} \to\St{n,a, p, m[l^m_{0..n} \mapsto -]}}\\ 
+&\frac{F\vdash\St{e, a, p, m} \to\St{e', a', p', m'}}{F\vdash\St{\mathbf{free}(l, e),a, p, m} \to\St{\mathbf{free}(l, e'),a', p', m'}} 
 \end{align*}
 $$
 $$
 \begin{align*}
 &\text{Free}_{memory\text{-}not\text{-}on\text{-}heap}\\ 
-& \frac{}{F\vdash\St{\mathbf{free}(l^p, n),a, p, m} \to\St{\mathbf{panic}\;\mathbf{FreeMemoryNotOnHeap},a, p, m[l^m_{0..n} \mapsto -]}}\\ 
+& \frac{}{F\vdash\St{\mathbf{free}(l^p, n),a, p, m} \to\St{\mathbf{panic}\;\mathbf{FreeMemoryNotOnHeap},a, p, m}}\\ 
+&\text{Free}_{memory\text{-}not\text{-}on\text{-}heap\text{-}null}\\ 
+& \frac{i = 0}{F\vdash\St{\mathbf{free}(l^m\{i, k, o, s\}, n),a, p, m} \to\St{\mathbf{panic}\;\mathbf{FreeMemoryNotOnHeap},a, p, m}}\\ 
 &\text{Free}_{partial\text{-}free}\\ 
-& \frac{o \neq 0 \lor s \neq n}{F\vdash\St{\mathbf{free}(l^m\{i, k, o, s\}, n),a, p, m} \to\St{\mathbf{panic}\;\mathbf{PartialFree},a, p, m}}\\ 
+& \frac{i \neq 0 \quad o \neq 0 \lor s \neq n}{F\vdash\St{\mathbf{free}(l^m\{i, k, o, s\}, n),a, p, m} \to\St{\mathbf{panic}\;\mathbf{PartialFree},a, p, m}}\\ 
 &\text{Free}_{double\text{-}free}\\ 
-& \frac{o = 0 \quad s = n \quad m(i) = (v_m, k_m) \quad k \neq k_m}{F\vdash\St{\mathbf{free}(l^m\{i, k, o, s\}, n),a, p, m} \to\St{\mathbf{panic}\;\mathbf{DoubleFree},a, p, m}}\\ 
+& \frac{i \neq 0 \quad o = 0 \quad s = n \quad m(i) = (v_m, k_m) \quad k \neq k_m}{F\vdash\St{\mathbf{free}(l^m\{i, k, o, s\}, n),a, p, m} \to\St{\mathbf{panic}\;\mathbf{DoubleFree},a, p, m}}\\ 
 &\text{Free}\\ 
-& \frac{o = 0 \quad s = n \quad m(i) = (v_m, k_m) \quad k = k_m}{F\vdash\St{\mathbf{free}(l^m\{i, k, o, s\}, n),a, p, m} \to\St{n,a, p, m[i_{0..n} \mapsto (-,0)]}}\\ 
+& \frac{i \neq 0 \quad o = 0 \quad s = n \quad m(i) = (v_m, k_m) \quad k = k_m}{F\vdash\St{\mathbf{free}(l^m\{i, k, o, s\}, n),a, p, m} \to\St{n,a, p, m[i_{0..n} \mapsto (-,0)]}}\\ 
 \end{align*}
 $$
 As derivações são relativamente ao explicativas, mas é relevante considerar que no caso do $\mathbf{PartialFree}$, casos em que $o = 0 \land s < n$ limpam toda a memória do ponteiro, mais algum colateral. Como esse contexto não existe em C, decidiu-se adicionar esse caso no contexto do $\mathbf{PartialFree}$.
@@ -349,16 +354,18 @@ $$
 &\frac{0 \leq o < s\quad p(i + o) = (v_p, k_p) \quad k = k_p \quad v_p \neq \bot}
 {F \vdash \St{\text{*}l^p\{i, k, o, s\}, a, p, m} \to \St{v_p, a, p, m}} \\
 \\
+&\text{Deref-memória}_{null\text{-}ptr\text{-}deref}\\
+&\frac{i = 0}{F \vdash \St{\text{*}l^m\{i, k, o, s\}, a, p, m} \to \St{\mathbf{panic}\;\mathbf{NullPtrDeref}, a, p, m}}\\
 &\text{Deref-memória}_{out\text{-}bounds\text{-}read}\\
-&\frac{0 > o \ge s}{F \vdash \St{\text{*}l^m\{i, k, o, s\}, a, p, m} \to \St{\mathbf{panic}\;\mathbf{OutOfBoundsRead}, a, p, m}}\\
+&\frac{i \neq 0 \quad 0 > o \ge s}{F \vdash \St{\text{*}l^m\{i, k, o, s\}, a, p, m} \to \St{\mathbf{panic}\;\mathbf{OutOfBoundsRead}, a, p, m}}\\
 &\text{Deref-memória}_{use\text{-}after\text{-}free}\\
-&\frac{0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k \neq k_m}
+&\frac{i \neq 0 \quad 0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k \neq k_m}
 {F \vdash \St{\text{*}l^m\{i, k, o, s\}, a, p, m} \to \St{\mathbf{panic}\;\mathbf{UseAfterFree}, a, p, m}} \\
 &\text{Deref-memória}_{uninitialized\text{-}acess}\\
-&\frac{0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k = k_m \quad v_m = \bot}
+&\frac{i \neq 0 \quad 0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k = k_m \quad v_m = \bot}
 {F \vdash \St{\text{*}l^m\{i, k, o, s\}, a, p, m} \to \St{\mathbf{panic}\;\mathbf{UninitializedAcess}, a, p, m}} \\
 &\text{Deref-memória}\\
-&\frac{0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k = k_m \quad v_m \neq \bot}
+&\frac{i \neq 0 \quad 0 \leq o < s\quad m(i + o) = (v_m, k_m) \quad k = k_m \quad v_m \neq \bot}
 {F \vdash \St{\text{*}l^m\{i, k, o, s\}, a, p, m} \to \St{v_m, a, p, m}} \\
 \end{align*}
 $$
