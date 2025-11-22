@@ -26,6 +26,12 @@ const base = import.meta.env.BASE_URL
 			crossorigin="anonymous"
 		/>
 		<link href="/blog/prism.css" rel="stylesheet" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title={title}
+			href={new URL("rss.xml", Astro.site)}
+		/>
 		<title>{title}</title>
 	</head>
 	<body>

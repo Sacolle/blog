@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-	"sync": "astro sync",
+    "sync": "astro sync",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/rss": "^4.0.14",
     "astro": "^4.15.12",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
